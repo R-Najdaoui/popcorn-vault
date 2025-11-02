@@ -1,29 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form } from "react-bootstrap";
-import { fetchMovies } from "../api/movies";
+import { fetchMovies, fetchGenres } from "../api/movies";
 
 function FilmsPage() {
   const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("All");
+  const [sortOption, setSortOption] = useState("Most recent");
 
   useEffect(() => {
-    const getMovies = async () => {
-      const data = await fetchMovies();
-      setMovies(data);
+    const getMoviesAndGenres = async () => {
+      const moviesData = await fetchMovies(5); 
+      setMovies(moviesData);
+      const genresData = await fetchGenres();
+      setGenres(genresData);
     };
-    getMovies();
+    getMoviesAndGenres();
   }, []);
 
-  // Filtered movies by search
-  const filteredMovies = movies.filter(movie =>
+
+  let filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (selectedGenre !== "All") {
+    filteredMovies = filteredMovies.filter((movie) =>
+      movie.genre_ids.includes(Number(selectedGenre))
+    );
+  }
+
+  filteredMovies.sort((a, b) => {
+    switch (sortOption) {
+      case "Most recent":
+        return new Date(b.release_date) - new Date(a.release_date);
+      case "Oldest":
+        return new Date(a.release_date) - new Date(b.release_date);
+      case "Highest rating":
+        return b.vote_average - a.vote_average;
+      case "Lowest rating":
+        return a.vote_average - b.vote_average;
+      default:
+        return 0;
+    }
+  });
 
   return (
     <Container>
       <h2>Films ({filteredMovies.length})</h2>
 
-      {/* Search & Filters */}
       <Row className="mb-3">
         <Col md={4}>
           <Form.Control
@@ -34,13 +59,23 @@ function FilmsPage() {
           />
         </Col>
         <Col md={3}>
-          <Form.Select>
-            <option>All genres</option>
-            {/* Add genre filter later */}
+          <Form.Select
+            value={selectedGenre}
+            onChange={(e) => setSelectedGenre(e.target.value)}
+          >
+            <option value="All">All genres</option>
+            {genres.map((genre) => (
+              <option key={genre.id} value={genre.id}>
+                {genre.name}
+              </option>
+            ))}
           </Form.Select>
         </Col>
         <Col md={3}>
-          <Form.Select>
+          <Form.Select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
             <option>Most recent</option>
             <option>Oldest</option>
             <option>Highest rating</option>
@@ -49,9 +84,8 @@ function FilmsPage() {
         </Col>
       </Row>
 
-      {/* Movie cards */}
       <Row>
-        {filteredMovies.map(movie => (
+        {filteredMovies.map((movie) => (
           <Col md={3} className="mb-4" key={movie.id}>
             <Card>
               <Card.Img
@@ -62,8 +96,7 @@ function FilmsPage() {
                 <Card.Title>{movie.title}</Card.Title>
                 <Card.Text>
                   Year: {movie.release_date?.split("-")[0]} <br />
-                  Rating: {movie.vote_average} <br />
-                  {/* Genre and platform can be added later */}
+                  Rating: {movie.vote_average}
                 </Card.Text>
               </Card.Body>
             </Card>
