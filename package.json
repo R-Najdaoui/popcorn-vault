@@ -3,19 +3,28 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://r-najdaoui.github.io/popcorn-vault/",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.4.0",
+    "@tailwindcss/vite": "^4.1.16",
     "axios": "^1.13.1",
     "bootstrap": "^5.3.8",
+    "gh-pages": "^6.3.0",
+    "gsap": "^3.13.0",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.5"
+    "react-router-dom": "^7.9.5",
+    "tailwindcss": "^4.1.16",
+    "three": "^0.181.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
