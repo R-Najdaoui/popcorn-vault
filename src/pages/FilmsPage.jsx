@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { fetchMovies, fetchGenres } from "../api/movies";
+import { useWishlist } from "../contexts/WishlistContext";
 
 function FilmsPage() {
   const [movies, setMovies] = useState([]);
@@ -8,6 +9,7 @@ function FilmsPage() {
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [sortOption, setSortOption] = useState("Most recent");
+  const { addToWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     const getMoviesAndGenres = async () => {
@@ -98,6 +100,14 @@ function FilmsPage() {
                   Year: {movie.release_date?.split("-")[0]} <br />
                   Rating: {movie.vote_average}
                 </Card.Text>
+                <Button
+                  variant={isInWishlist(movie.id) ? "success" : "outline-primary"}
+                  size="sm"
+                  onClick={() => addToWishlist(movie)}
+                  disabled={isInWishlist(movie.id)}
+                >
+                  {isInWishlist(movie.id) ? "✓ Added" : "+"}
+                </Button>
               </Card.Body>
             </Card>
           </Col>
