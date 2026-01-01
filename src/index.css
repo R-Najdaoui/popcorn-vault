@@ -1,2 +1,145 @@
 @import "tailwindcss";
 
+.page-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.movie-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  transform: translateY(0) scale(1) !important;
+  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 0.375rem !important;
+  overflow: hidden !important;
+  position: relative !important;
+  background: white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  will-change: transform, box-shadow, border-color !important;
+}
+
+.movie-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow:
+    0 16px 32px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(13, 110, 253, 0.2) !important;
+  z-index: 10 !important;
+  border-color: rgba(13, 110, 253, 0.3) !important;
+}
+
+.movie-card .card-img-top {
+  transition: transform 0.3s ease, filter 0.3s ease !important;
+  transform: scale(1) !important;
+  transform-origin: center !important;
+  will-change: transform, filter !important;
+  pointer-events: none !important;
+}
+
+.movie-card:hover .card-img-top {
+  filter: brightness(1.05) saturate(1.1) !important;
+  transform: scale(1.03) !important;
+}
+
+.movie-card .card-body {
+  transition: background-color 0.3s ease !important;
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+}
+
+.movie-card:hover .card-body {
+  background-color: rgba(13, 110, 253, 0.02) !important;
+}
+
+.movie-card .card-title {
+  transition: color 0.3s ease !important;
+}
+
+.movie-card:hover .card-title {
+  color: #0d6efd !important;
+}
+
+.row {
+  pointer-events: auto !important;
+}
+
+.col-md-3 {
+  pointer-events: auto !important;
+}
+
+.container {
+  pointer-events: auto !important;
+}
+
+.movie-card {
+  pointer-events: auto !important;
+}
+
+@media (hover: hover) {
+  .movie-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+  }
+}
+
+.movie-card::after {
+  content: '';
+  position: absolute !important;
+  top: -2px !important;
+  left: -2px !important;
+  right: -2px !important;
+  bottom: -2px !important;
+  background: linear-gradient(45deg, rgba(13, 110, 253, 0.1), rgba(13, 110, 253, 0.05)) !important;
+  border-radius: inherit !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+.movie-card:hover::after {
+  opacity: 1 !important;
+}
+
+.watchlist-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.watchlist-btn:hover:not(.in-watchlist) {
+  animation: heartPulse 0.6s ease-in-out;
+}
+
+.watchlist-btn.in-watchlist {
+  animation: heartAdded 0.8s ease-in-out;
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
+}
+
+@keyframes heartAdded {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.watchlist-btn.in-watchlist::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+  opacity: 0.3;
+  z-index: -1;
+}
+

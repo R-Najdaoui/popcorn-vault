@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { fetchMovies, fetchGenres } from "../api/movies";
-import { useWishlist } from "../contexts/WishlistContext";
+import { useWatchlist } from "../contexts/WatchlistContext";
 
 function FilmsPage() {
   const [movies, setMovies] = useState([]);
@@ -9,7 +9,7 @@ function FilmsPage() {
   const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [sortOption, setSortOption] = useState("Most recent");
-  const { addToWishlist, isInWishlist } = useWishlist();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
 
   useEffect(() => {
     const getMoviesAndGenres = async () => {
@@ -48,8 +48,8 @@ function FilmsPage() {
   });
 
   return (
-    <Container>
-      <h2>Films ({filteredMovies.length})</h2>
+    <Container className="page-content">
+      <h2>Movies ({filteredMovies.length})</h2>
 
       <Row className="mb-3">
         <Col md={4}>
@@ -89,7 +89,7 @@ function FilmsPage() {
       <Row>
         {filteredMovies.map((movie) => (
           <Col md={3} className="mb-4" key={movie.id}>
-            <Card>
+            <Card className="movie-card" style={{ position: 'relative', overflow: 'hidden' }}>
               <Card.Img
                 variant="top"
                 src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -100,14 +100,62 @@ function FilmsPage() {
                   Year: {movie.release_date?.split("-")[0]} <br />
                   Rating: {movie.vote_average}
                 </Card.Text>
-                <Button
-                  variant={isInWishlist(movie.id) ? "success" : "outline-primary"}
-                  size="sm"
-                  onClick={() => addToWishlist(movie)}
-                  disabled={isInWishlist(movie.id)}
+                <button
+                  className={`watchlist-btn ${isInWatchlist(movie.id) ? 'in-watchlist' : ''}`}
+                  onClick={() => {
+                    if (isInWatchlist(movie.id)) {
+                      removeFromWatchlist(movie.id);
+                    } else {
+                      addToWatchlist(movie);
+                    }
+                  }}
+                  style={{
+                    border: 'none',
+                    background: isInWatchlist(movie.id) ? 'linear-gradient(45deg, #ff6b6b, #ee5a52)' : 'transparent',
+                    color: isInWatchlist(movie.id) ? 'white' : '#6c757d',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isInWatchlist(movie.id) ? '0 4px 12px rgba(255, 107, 107, 0.3)' : 'none',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    zIndex: 10
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'scale(1.1)';
+                    if (!isInWatchlist(movie.id)) {
+                      e.target.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a52)';
+                      e.target.style.color = 'white';
+                      e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.3)';
+                    } else {
+                      e.target.style.boxShadow = '0 6px 16px rgba(255, 107, 107, 0.4)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
+                    if (!isInWatchlist(movie.id)) {
+                      e.target.style.background = 'transparent';
+                      e.target.style.color = '#6c757d';
+                      e.target.style.boxShadow = 'none';
+                    } else {
+                      e.target.style.boxShadow = '0 4px 12px rgba(255, 107, 107, 0.3)';
+                    }
+                  }}
                 >
-                  {isInWishlist(movie.id) ? "✓ Added" : "+"}
-                </Button>
+                  <i
+                    className={`bi ${isInWatchlist(movie.id) ? 'bi-heart-fill' : 'bi-heart'}`}
+                    style={{
+                      fontSize: '18px',
+                      transition: 'all 0.3s ease'
+                    }}
+                  ></i>
+                </button>
               </Card.Body>
             </Card>
           </Col>
